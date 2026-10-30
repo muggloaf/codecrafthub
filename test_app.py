@@ -25,6 +25,27 @@ class CourseAPITests(unittest.TestCase):
         self.assertEqual(response.json['courses'], [])
         self.assertEqual(json.loads(self.path.read_text()), [])
 
+    def test_dashboard_is_served(self):
+        response = self.client.get('/dashboard')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'<title>CodeCraftHub: Your Learning Management Platform</title>',
+                      response.data)
+        self.assertEqual(response.mimetype, 'text/html')
+        response.close()
+
+    def test_local_live_server_preflight(self):
+        response = self.client.options('/api/courses/1', headers={
+            'Origin': 'http://127.0.0.1:5500',
+            'Access-Control-Request-Method': 'PUT',
+            'Access-Control-Request-Headers': 'Content-Type'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers['Access-Control-Allow-Origin'],
+                         'http://127.0.0.1:5500')
+        self.assertIn('PUT', response.headers['Access-Control-Allow-Methods'])
+        response = self.client.get('/api/courses',
+                                   headers={'Origin': 'https://unrelated.example'})
+        self.assertNotIn('Access-Control-Allow-Origin', response.headers)
+
     def test_complete_crud_flow_and_persistence(self):
         added = self.client.post('/api/courses', json=self.course)
         self.assertEqual(added.status_code, 201)

@@ -7,7 +7,7 @@ import re
 import tempfile
 from threading import RLock
 
-from flask import Flask, current_app, jsonify, request
+from flask import Flask, current_app, jsonify, request, send_file
 from werkzeug.exceptions import HTTPException
 
 
@@ -110,6 +110,27 @@ def create_app(config=None):
         'COURSES_FILE', str(Path(__file__).with_name('courses.json')))
     if config:
         app.config.update(config)
+
+    @app.after_request
+    def allow_local_dashboard(response):
+        # Live Server uses another origin. Allow its default local ports only.
+        allowed_origins = {
+            f'http://{host}:{port}' for host in ('localhost', '127.0.0.1')
+            for port in (5000, 5500, 5501)
+        }
+        origin = request.headers.get('Origin')
+        if origin in allowed_origins:
+            response.headers['Access-Control-Allow-Origin'] = origin
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+            response.headers['Access-Control-Allow-Methods'] = (
+                'GET, POST, PUT, DELETE, OPTIONS')
+            response.vary.add('Origin')
+        return response
+
+    @app.get('/dashboard')
+    @app.get('/index.html')
+    def dashboard():
+        return send_file(Path(__file__).with_name('index.html'))
 
     @app.errorhandler(StorageError)
     def storage_error(error):

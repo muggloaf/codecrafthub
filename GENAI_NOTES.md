@@ -20,8 +20,10 @@ No separate GenAI Classroom session is claimed.
 - Created tests for corrupt data and simulated file failures.
 - Prepared a real cURL smoke test that saves actual responses rather than
   treating example responses as proof of execution.
-- Identified that the four submitted questions depend on frontend instructions
-  absent from Part 1; exact styling values are not assumed.
+- After receiving Part 2, implemented its exact title, colors, and Remove-button
+  label in one HTML file containing all CSS and JavaScript.
+- Added Live Server CORS support and a DOM integration test for real API-backed
+  frontend CRUD behavior. The UI was implemented locally, not in Bolt.
 
 Test results and command output should be inspected after running the provided
 commands. Successful tests do not establish a Coursera grade or submission.

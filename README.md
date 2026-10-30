@@ -2,7 +2,8 @@
 
 A beginner-friendly Python Flask REST API for tracking developers' learning
 goals. Courses are stored in a JSON text file; no database, accounts, or API keys
-are needed. This implements the supplied **Part 1, Option B (Python)** lab.
+are needed. Includes the Part 1 Python API and the Part 2 single-file CRUD
+dashboard, implemented with plain HTML, CSS, and JavaScript.
 
 ## Features
 
@@ -14,6 +15,7 @@ are needed. This implements the supplied **Part 1, Option B (Python)** lab.
 - Return JSON errors for missing courses, invalid data, and storage failures.
 - Preserve the previous file if writing fails; never reset corrupt data silently.
 - Bonus endpoints for course statistics and case-insensitive search.
+- Responsive dashboard with add, edit, remove, loading, and error states.
 
 ## Install and run on Windows
 
@@ -29,6 +31,13 @@ The lab's dependency versions are pinned in `requirements.txt`. Using the
 virtual environment's Python directly avoids PowerShell activation-policy issues.
 The API runs at <http://127.0.0.1:5000>. Leave that terminal running and use a
 second terminal for cURL requests.
+
+Open <http://localhost:5000/dashboard> for the course dashboard. Its HTML, CSS,
+and JavaScript are all in `index.html`, beside the Python backend. You can also
+use **Open with Live Server** on `index.html` (default port 5500 or 5501). The
+API allows those local origins, including the PUT/DELETE preflight requests.
+The dashboard's `API_BASE_URL` is `http://localhost:5000/api/courses`; update it
+if you deliberately change the API's host or port.
 
 On Linux or macOS, the equivalent commands are:
 
@@ -124,7 +133,15 @@ Unit tests use temporary files and do not change your saved courses:
 
 They cover CRUD, persistence across app instances, ID generation, missing fields,
 invalid types/dates/statuses, malformed JSON, unknown courses, immutable fields,
-corrupt files, read/write failures, search, and statistics.
+corrupt files, read/write failures, search, statistics, dashboard delivery, and
+Live Server preflight handling.
+
+The optional `test_dashboard.cjs` uses jsdom to run the actual HTML's JavaScript
+against an isolated API selected by `TEST_API_URL`. It checks the exact title and
+colors, creation, edit/retrieval, update, deletion confirmation, safe rendering,
+and offline error recovery. Run it only against an empty temporary data file;
+it deliberately refuses to run when the selected API already contains courses.
+The dashboard itself needs no JavaScript packages or build step.
 
 With the API running, perform actual cURL requests and save their responses:
 
@@ -166,19 +183,23 @@ Set `COURSES_FILE` to use another storage path.
 ```text
 codecrafthub/
   app.py                 Flask application, validation, and JSON helpers
+  index.html             Complete single-file course management dashboard
   requirements.txt       Lab-specified dependencies
   test_app.py            Isolated automated unit tests
+  test_dashboard.cjs     DOM integration checks against an isolated test API
   smoke_test.py          Real cURL checks and evidence capture
   examples/              Copyable POST/PUT and error payloads
   GENAI_NOTES.md         AI-assisted development and validation notes
+  SUBMISSION_ANSWERS.md  Exact four frontend snippets implemented in index.html
   README.md              Setup, API, testing, and troubleshooting
   courses.json           Automatically generated; ignored by Git
   evidence/              Actual local command output; ignored by Git
 ```
 
-## Scope of the four submission questions
+## Frontend submission snippets
 
-The supplied Part 1 Python lab and its linked exemplar do not include a frontend.
-They therefore define no title tag, `.btn-primary`, `.btn-success`, or delete
-button markup. Those answers require the separate Part 2 dashboard instructions.
-This project does not claim to have completed or submitted that missing part.
+`SUBMISSION_ANSWERS.md` contains the exact title, purple primary-button styling,
+amber success-button styling, and red Remove-button code from `index.html`.
+The implementation follows the supplied Part 2 prompt. It was built locally
+with this AI assistant; it was not generated in a Bolt session, and no course
+submission is claimed.
