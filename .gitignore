@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.py[cod]
+courses.json
+courses.json.*.tmp
+evidence/
+.env
